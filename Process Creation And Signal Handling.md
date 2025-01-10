@@ -1,3 +1,12 @@
+# Process Creation And Signal Handling
+
+Mai Makkawi Mohammed Abuzaid
+Ayat Abdalatife Genawy Mohammed 
+Ahmed Najm Aldeen Goutbi
+AbdAlrahman Mohammed Ahmed Abashar
+
+
+
 ## Overview of the Project
 ### Objective
 This project aims to deepen the understanding of process creation, attributes, and signal handling in Linux. The key goals include:
@@ -67,3 +76,123 @@ fork failed: [Error Message]
 ##### Case 3: Invalid Input
 Input: Non-integer (e.g., abc)
 Expected Behavior: the program will run and the variable will equal zero
+
+
+## Code 2 
+
+### Design Overview
+This program examines two attributes of processes—signal dispositions and alarm timers—to determine if they are inherited by a child process created using fork().
+### Key Features
+1.	Signal Dispositions:
+○	A custom signal handler is set up for SIGUSR1 using the signal() function. This allows the process to handle SIGUSR1 with a user-defined behavior.
+○	The child process checks if it inherits this signal handler or if the signal disposition is reset.
+2.	Alarm Timers:
+○	An alarm is set in the parent process using the alarm() function, which schedules a SIGALRM signal after a specified time.
+○	The child process verifies whether it inherits the alarm timer or if it is reset.
+### Execution Flow
+1.	The parent process sets up a custom signal handler for SIGUSR1 and an alarm for 5 seconds.
+2.	The fork() system call creates a child process:
+○	Child Process:
+■	Checks if the SIGUSR1 signal handler is inherited.
+■	Retrieves the remaining time on the alarm timer.
+○	Parent Process:
+■	Waits for the child process to complete and continues execution.
+ 
+### Complete Specification
+#### Signal Dispositions
+The program demonstrates whether the custom signal handler for SIGUSR1 is inherited by the child process. This is verified using the signal() function in the child.
+#### Alarm Timers
+The program tests if the child process inherits the alarm timer set by the parent. The alarm(0) function cancels any active alarm and retrieves the remaining time in the child process to verify this.
+#### Ambiguities Addressed
+1.	Signal Inheritance:
+○	Signal handlers are inherited unless explicitly reset to default or ignored.
+2.	Alarm Timer:
+○	The alarm() timer is not shared between parent and child. The child does not inherit the parent’s timer.
+ 
+### Known Bugs or Problems
+1.	Signal Handling Validation:
+○	The program only checks SIGUSR1. Other signals may have different inheritance behavior, which is not tested here.
+2.	Alarm Timer Validation:
+○	The program does not handle cases where the fork() call delays due to system load, which could reduce the accuracy of the remaining alarm time.
+
+
+### Test Cases and Expected Outputs
+#### Case 1: Signal Disposition
+##### Expected Output:
+Parent process PID: [ParentPID]
+Child process PID: [ChildPID]
+Child process inherited custom signal handler for SIGUSR1
+Child process alarm timer: 0 seconds remaining
+Parent process continues
+
+#### Case 2: Alarm Timer
+If the child inherits the alarm timer (unexpected behavior, as per POSIX standards): Expected Output:
+Child process alarm timer: 4 seconds remaining
+
+#### Case 3: Fork Failure
+If fork() fails: Expected Output:
+fork failed: [Error Message]
+
+#### Case 4: Ignored Signal
+If SIGUSR1 is set to SIG_IGN instead of a custom handler: Expected Output:
+Child process inherited SIGUSR1 as ignored
+
+## Code 3
+
+### Design Overview
+This program investigates whether signal dispositions and alarm timers are inherited by a child process created using fork(). The key focus is on observing which process receives the SIGALRM signal when the alarm expires and whether the signal handler is inherited by the child.
+### Key Features
+1.	Signal Dispositions:
+○	The program sets up a custom signal handler for SIGALRM using the sigaction() function.
+○	The child process checks if it inherits the signal handler by examining the sa_handler field.
+2.	Alarm Timers:
+○	The parent sets an alarm for 2 seconds using the alarm() function.
+○	Both the parent and child processes run loops to observe which process receives the SIGALRM signal.
+### Execution Flow
+1.	The parent process sets up a custom signal handler for SIGALRM and starts a 2-second alarm timer.
+2.	The fork() system call creates a child process:
+○	Child Process:
+■	Fetches the SIGALRM disposition using sigaction() and determines whether it has inherited the signal handler.
+○	Both Processes:
+■	Enter a loop to print their PID and wait for SIGALRM to trigger the signal handler.
+ 
+### Complete Specification
+#### Signal Dispositions
+The custom SIGALRM handler is defined and set in the parent process. The child process uses sigaction() to determine if the SIGALRM disposition is inherited. According to POSIX standards:
+●	Signal dispositions, except those set to SIG_IGN or SIG_DFL, are inherited.
+#### Alarm Timers
+The program checks whether the child process inherits the alarm timer. As per POSIX standards:
+●	Alarm timers are not shared between parent and child. The timer is reset in the child process after fork().
+#### Ambiguities Addressed
+1.	Signal Handler Behavior:
+○	The program verifies if the child inherits the parent’s signal handler using sa_handler.
+2.	Alarm Behavior:
+○	The program demonstrates that only one process receives the SIGALRM signal based on timer inheritance behavior.
+ 
+### Known Bugs or Problems
+1.	Signal Handling Validation:
+○	The program only checks SIGALRM. Behavior for other signals is not validated.
+2.	Timer Precision:
+○	If the parent process executes slowly or the system is under load, the alarm may expire before the loop begins, potentially causing inconsistent results.
+
+
+### Test Cases and Expected Outputs
+#### Case 1: Signal Disposition
+##### Expected Output:
+
+Child inherits signal disposition
+Process [ParentPID] is running
+Process [ChildPID] is running
+...
+Received signal 14 in process [ParentPID]
+
+
+●	The SIGALRM handler triggers in the parent because the child does not inherit the alarm timer.
+
+### Case 2: Alarm Timer
+If the alarm timer is unexpectedly shared (non-POSIX behavior): Expected Output:
+Received signal 14 in process [ChildPID]
+
+### Case 3: Fork Failure
+If fork() fails: Expected Output:
+fork: [Error Message]
