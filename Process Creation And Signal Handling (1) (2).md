@@ -280,9 +280,7 @@ fork: [Error Message]
 
 #### 1. **Compile the Programs:**
    ```bash
-   gcc -o program program.c
-   gcc -o program2 program2.c
-   gcc -o program3 program3.c
+   make
    ```
 
 #### 2. **Run the Executables:**
