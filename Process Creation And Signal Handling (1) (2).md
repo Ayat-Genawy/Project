@@ -23,8 +23,9 @@ Processes are fundamental in operating systems, providing isolated execution env
 ### Key concepts:
 
 1. Process Duplication with fork():
+   
 ○ Memory is copied using a copy-on-write mechanism. The child and parent processes share the same text segment but maintain separate data, stack, and heap segments. This ensures each process can modify its variables independently.
-2. Attributes Shared/Inheritable with fork():
+3. Attributes Shared/Inheritable with fork():
    
 ○ Signal dispositions: Custom handlers are inherited, while signals set to SIG_IGN or SIG_DFL remain unchanged.
 
@@ -103,10 +104,13 @@ This program examines two attributes of processes—signal dispositions and alar
 1.	The parent process sets up a custom signal handler for SIGUSR1 and an alarm for 5 seconds.
 2.	The fork() system call creates a child process:
 ○	Child Process:
+
 ■	Checks if the SIGUSR1 signal handler is inherited.
+
 ■	Retrieves the remaining time on the alarm timer.
 
 ○	Parent Process:
+
 ■	Waits for the child process to complete and continues execution.
  
 ### Complete Specification
