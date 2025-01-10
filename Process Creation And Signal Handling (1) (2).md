@@ -1,6 +1,6 @@
 # Process Creation And Signal Handling
 
-##### STATISTICAL & COMPUTER SCIENCES 
+##### STATISTICAL & COMPUTER SCIENCES DEPARTMENT
 
 ##### MADE BY :
 
