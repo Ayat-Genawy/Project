@@ -9,8 +9,6 @@
 #### 3.AbdAlrahman Mohammed Ahmed Abashar
 #### 4.Ahmed Nagmeldin Goutbi Elhassan
 
-
-
 #### DEPARTMENT:
 
 ##### STATISTICAL & COMPUTER SCIENCES
